@@ -93,7 +93,7 @@ class EjectTool
     /// <returns>操作が正常に完了できたかの論理値</returns>
     private static bool LockVolume(IntPtr handle)
     {
-        for (int i = 0; i < 5; i++) // 使用していない判定になるまでにラグがあるため5回繰り返す
+        for (int i = 0; i < 10; i++) // 使用していない判定になるまでにラグがあるため5回繰り返す
         {
             if (DeviceIoControl(handle, FSCTL_LOCK_VOLUME, IntPtr.Zero, 0, IntPtr.Zero, 0, out uint byteReturned, IntPtr.Zero))
             {

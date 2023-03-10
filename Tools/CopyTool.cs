@@ -14,6 +14,7 @@ class CopyTool
         DirectoryInfo destination = new DirectoryInfo(destinationDir);
         DirectoryDelete(source, destination);
         DirectoryCopy(source, destination);
+        Console.Write("");
     }
 
     /// <summary>
@@ -47,7 +48,7 @@ class CopyTool
 
     /// <summary>
     /// 指定された二つのディレクトリー構造を比較し同じ構造になる様にファイルとディレクトリーのコピーをする
-    /// 比較先にファイルが在った場合最終書き込み時刻を比較し異なる場合のみコピーする
+    /// 比較先にファイルが在った場合最終書き込み日を比較し異なる場合のみコピーする
     /// </summary>
     /// <param name="source">比較元のディレクトリー情報</param>
     /// <param name="destination">比較先のディレクトリー情報</param>
@@ -69,7 +70,7 @@ class CopyTool
             {
                 File.Copy(fileInfo.FullName, destinationFile.FullName);
             }
-            else if (fileInfo.LastWriteTime != destinationFile.LastWriteTime) // ファイルの最終書き込み時刻の比較
+            else if (fileInfo.LastWriteTime.Date != destinationFile.LastWriteTime.Date) // ファイルの最終書き込み日の比較
             {
                 destinationFile.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
                 File.Copy(fileInfo.FullName, destinationFile.FullName, true); // 上書きコピーをする
