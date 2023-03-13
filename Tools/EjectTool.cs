@@ -75,7 +75,7 @@ class EjectTool
     /// <returns>接続がが正常に解除できたかの論理値</returns>
     public static bool Eject(string driveLetter)
     {
-        driveLetter = driveLetter[0] + ":"; // 渡されたdriveLetterの0番目の文字を取得し、確実にドライブレターをなるように処理をする
+        driveLetter = @"\\.\" + driveLetter[0] + ":"; // 渡されたdriveLetterの0番目の文字を取得し、確実にドライブレターをなるように処理をする
         IntPtr handle = CreateFile(driveLetter, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, IntPtr.Zero, 0x3, 0, IntPtr.Zero);
         bool result = false;
         if (LockVolume(handle))
