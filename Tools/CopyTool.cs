@@ -2,7 +2,6 @@ namespace UsbTool.Tools;
 
 class CopyTool
 {
-
     /// <summary>
     /// 比較先のディレクトリー構造を比較元のディレクトリー構造を同じにする
     /// </summary>
@@ -14,7 +13,6 @@ class CopyTool
         DirectoryInfo destination = new DirectoryInfo(destinationDir);
         DirectoryDelete(source, destination);
         DirectoryCopy(source, destination);
-        Console.Write("");
     }
 
     /// <summary>
@@ -31,7 +29,7 @@ class CopyTool
             if (!sourceFile.Exists)
             {
                 fileInfo.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
-                fileInfo.Delete();
+                fileInfo.Delete(); // ファイルを削除する
             }
         }
         foreach (DirectoryInfo directoryInfo in destination.GetDirectories()) // destinationの下部にあるディレクトリ情報を全て取得し反復処理を行う
@@ -42,7 +40,7 @@ class CopyTool
         if (!source.Exists)
         {
             destination.Attributes = FileAttributes.Normal; // ディレクトリ属性を標準に変更する
-            destination.Delete();
+            destination.Delete(); // ディレクトリを削除する
         }
     }
 
@@ -82,7 +80,7 @@ class CopyTool
 
     /// <summary>
     /// 指定された二つのディレクトリー構造を比較し同じ構造になる様にファイルとディレクトリーのコピーをする
-    /// 比較先にファイルが在った場合最終書き込み日を比較し異なる場合のみコピーする
+    /// 比較先にファイルが在った場合内容を比較し異なる場合のみコピーする
     /// </summary>
     /// <param name="source">比較元のディレクトリー情報</param>
     /// <param name="destination">比較先のディレクトリー情報</param>
@@ -90,7 +88,7 @@ class CopyTool
     {
         if (!destination.Exists) // ディレクトリの存在確認
         {
-            destination.Create();
+            destination.Create(); // ディレクトリを作成する
         }
         if (destination.FullName != destination.Root.FullName) // 比較先のディレクトリがルートディレクトリの場合属性の変更が不可能なため判別する
         {
@@ -102,7 +100,7 @@ class CopyTool
             FileInfo destinationFile = new FileInfo(destinationFilePath);
             if (!destinationFile.Exists) // ファイルの存在確認
             {
-                File.Copy(fileInfo.FullName, destinationFile.FullName);
+                File.Copy(fileInfo.FullName, destinationFile.FullName); // コピーをする
             }
             else if (!FileCompare(fileInfo, destinationFile)) // ファイルの内容の比較
             {
