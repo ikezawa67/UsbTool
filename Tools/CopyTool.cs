@@ -49,18 +49,24 @@ class CopyTool
     /// <summary>
     /// ファイルの内容が同じか比較する
     /// </summary>
-    /// <param name="file1">ファイル1のパス</param>
-    /// <param name="file2">ファイル2のパス</param>
+    /// <param name="file1">ファイル情報1</param>
+    /// <param name="file2">ファイル情報2</param>
     /// <returns>ファイルの内容が同じかの真理値</returns>
-    private static bool FileCompare(string file1, string file2)
+    private static bool FileCompare(FileInfo file1, FileInfo file2)
     {
         int f1byte;
         int f2byte;
-        using (FileStream fs1 = new FileStream(file1, FileMode.Open)) // ファイルストリームを開く
-        using (FileStream fs2 = new FileStream(file2, FileMode.Open)) // ファイルストリームを開く
+        FileAttributes fa1 = file1.Attributes; // 現在のファイル属性を保持
+        file1.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
+        FileAttributes fa2 = file2.Attributes; // 現在のファイル属性を保持
+        file2.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
+        using (FileStream fs1 = new FileStream(file1.FullName, FileMode.Open)) // ファイルストリームを開く
+        using (FileStream fs2 = new FileStream(file2.FullName, FileMode.Open)) // ファイルストリームを開く
         {
             if (fs1.Length != fs2.Length) // fs1とfs2のストリーム長を比較する
             {
+                file1.Attributes = fa1;
+                file2.Attributes = fa2;
                 return false;
             }
             do
@@ -69,6 +75,8 @@ class CopyTool
                 f2byte = fs2.ReadByte(); // fs2から1バイト読み込む
             } while ((f1byte == f2byte) && (f1byte != -1)); // 2つのバイトが同じで、最終バイトでなければ繰り返す
         }
+        file1.Attributes = fa1;
+        file2.Attributes = fa2;
         return ((f1byte - f2byte) == 0); // 2つのバイトの差が0か判別する
     }
 
@@ -96,7 +104,7 @@ class CopyTool
             {
                 File.Copy(fileInfo.FullName, destinationFile.FullName);
             }
-            else if (!FileCompare(fileInfo.FullName, destinationFile.FullName)) // ファイルの内容の比較
+            else if (!FileCompare(fileInfo, destinationFile)) // ファイルの内容の比較
             {
                 destinationFile.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
                 File.Copy(fileInfo.FullName, destinationFile.FullName, true); // 上書きコピーをする
