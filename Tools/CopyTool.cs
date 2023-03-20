@@ -47,6 +47,32 @@ class CopyTool
     }
 
     /// <summary>
+    /// ファイルの内容が同じか比較する
+    /// </summary>
+    /// <param name="file1">ファイル1のパス</param>
+    /// <param name="file2">ファイル2のパス</param>
+    /// <returns>ファイルの内容が同じかの真理値</returns>
+    private static bool FileCompare(string file1, string file2)
+    {
+        int f1byte;
+        int f2byte;
+        using (FileStream fs1 = new FileStream(file1, FileMode.Open)) // ファイルストリームを開く
+        using (FileStream fs2 = new FileStream(file2, FileMode.Open)) // ファイルストリームを開く
+        {
+            if (fs1.Length != fs2.Length) // fs1とfs2のストリーム長を比較する
+            {
+                return false;
+            }
+            do
+            {
+                f1byte = fs1.ReadByte(); // fs1から1バイト読み込む
+                f2byte = fs2.ReadByte(); // fs2から1バイト読み込む
+            } while ((f1byte == f2byte) && (f1byte != -1)); // 2つのバイトが同じで、最終バイトでなければ繰り返す
+        }
+        return ((f1byte - f2byte) == 0); // 2つのバイトの差が0か判別する
+    }
+
+    /// <summary>
     /// 指定された二つのディレクトリー構造を比較し同じ構造になる様にファイルとディレクトリーのコピーをする
     /// 比較先にファイルが在った場合最終書き込み日を比較し異なる場合のみコピーする
     /// </summary>
@@ -70,7 +96,7 @@ class CopyTool
             {
                 File.Copy(fileInfo.FullName, destinationFile.FullName);
             }
-            else if (fileInfo.LastWriteTime.Date != destinationFile.LastWriteTime.Date) // ファイルの最終書き込み日の比較
+            else if (!FileCompare(fileInfo.FullName, destinationFile.FullName)) // ファイルの内容の比較
             {
                 destinationFile.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
                 File.Copy(fileInfo.FullName, destinationFile.FullName, true); // 上書きコピーをする
