@@ -80,7 +80,7 @@ class CopyTool
 
     /// <summary>
     /// 指定された二つのディレクトリー構造を比較し同じ構造になる様にファイルとディレクトリーのコピーをする
-    /// 比較先にファイルが在った場合内容を比較し異なる場合のみコピーする
+    /// 比較先にファイルが在るが、最終書き込み日時が異なる場合は内容を比較し異なる場合のみ上書きコピーする
     /// </summary>
     /// <param name="source">比較元のディレクトリー情報</param>
     /// <param name="destination">比較先のディレクトリー情報</param>
@@ -102,10 +102,13 @@ class CopyTool
             {
                 File.Copy(fileInfo.FullName, destinationFile.FullName); // コピーをする
             }
-            else if (!FileCompare(fileInfo, destinationFile)) // ファイルの内容の比較
+            else if (fileInfo.LastWriteTime != destinationFile.LastWriteTime) // ファイルの採取書き込み日時が異なるか判別する
             {
-                destinationFile.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
-                File.Copy(fileInfo.FullName, destinationFile.FullName, true); // 上書きコピーをする
+                if (!FileCompare(fileInfo, destinationFile)) // ファイルの内容の比較
+                {
+                    destinationFile.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
+                    File.Copy(fileInfo.FullName, destinationFile.FullName, true); // ファイルを上書きコピーをする
+                }
             }
             destinationFile.Attributes = fileInfo.Attributes; // 比較先のファイル属性を比較元のファイル属性に変更する
         }
