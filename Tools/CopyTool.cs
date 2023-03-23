@@ -54,17 +54,11 @@ class CopyTool
     {
         int f1byte;
         int f2byte;
-        FileAttributes fa1 = file1.Attributes; // 現在のファイル属性を保持
-        file1.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
-        FileAttributes fa2 = file2.Attributes; // 現在のファイル属性を保持
-        file2.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
         using (FileStream fs1 = new FileStream(file1.FullName, FileMode.Open, FileAccess.Read)) // ファイルストリームを開く
         using (FileStream fs2 = new FileStream(file2.FullName, FileMode.Open, FileAccess.Read)) // ファイルストリームを開く
         {
             if (fs1.Length != fs2.Length) // fs1とfs2のストリーム長を比較する
             {
-                file1.Attributes = fa1;
-                file2.Attributes = fa2;
                 return false;
             }
             do
@@ -73,8 +67,6 @@ class CopyTool
                 f2byte = fs2.ReadByte(); // fs2から1バイト読み込む
             } while ((f1byte == f2byte) && (f1byte != -1)); // 2つのバイトが同じで、最終バイトでなければ繰り返す
         }
-        file1.Attributes = fa1;
-        file2.Attributes = fa2;
         return ((f1byte - f2byte) == 0); // 2つのバイトの差が0か判別する
     }
 
