@@ -58,8 +58,8 @@ class CopyTool
         file1.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
         FileAttributes fa2 = file2.Attributes; // 現在のファイル属性を保持
         file2.Attributes = FileAttributes.Normal; // ファイル属性を標準に変更する
-        using (FileStream fs1 = new FileStream(file1.FullName, FileMode.Open)) // ファイルストリームを開く
-        using (FileStream fs2 = new FileStream(file2.FullName, FileMode.Open)) // ファイルストリームを開く
+        using (FileStream fs1 = new FileStream(file1.FullName, FileMode.Open, FileAccess.Read)) // ファイルストリームを開く
+        using (FileStream fs2 = new FileStream(file2.FullName, FileMode.Open, FileAccess.Read)) // ファイルストリームを開く
         {
             if (fs1.Length != fs2.Length) // fs1とfs2のストリーム長を比較する
             {
